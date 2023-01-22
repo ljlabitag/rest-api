@@ -2,42 +2,43 @@ import prisma from "@/lib/prisma";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
-        const trip = await prisma.trip.findUnique({
+        const expense = await prisma.expense.findUnique({
             where: {
                 id: parseInt(req.query.id)
             }
         });
-        if (!trip) {
+
+        if (!expense) {
             return res.status(404).json({message: "Not Found"});
         }
-        return res.status(200).json(trip);
+
+        return res.status(200).json({...expense});
     }
 
     if (req.method === "PUT") {
-        const {user, name, start_date, end_date} = req.body;
+        const {trip, name, date, amount, currency} = req.body;
 
-        await prisma.trip.update({
+        await prisma.expense.update({
             data: {
-                user, 
+                trip,
                 name,
-                start_date,
-                end_date
+                date,
+                amount,
+                currency
             },
             where: {
                 id: parseInt(req.query.id)
             }
-        })
-
+        });
         return res.status(200).end();
     }
 
     if (req.method === "DELETE") {
-        await prisma.trip.delete({
+        await prisma.expense.delete({
             where: {
                 id: parseInt(req.query.id)
             }
         });
-
         return res.status(200).end();
     }
 }
